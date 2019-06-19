@@ -1,69 +1,123 @@
 void get_data(){
+/*
+LF "LiquidFuel"
+OX "Oxidizer"
+SF "SolidFuel"
+MP "MonoPropellant"
+XE "XenonGas"
+EL "ElectricCharge"
+AIR "IntakeAir"
+*/
+  if (runOnce){
+    krpc_SpaceCenter_Resources_Max(conn, &max_lf, resources, "LiquidFuel");
+    if (int(max_lf) > 0) { 
+      has_lf = true; 
+    } else {
+      has_lf = false; 
+      sendToDisplay1(String("tlf.txt=\"0/0\""));
+      sendToDisplay1(String("jlf.val=100"));
+    }
+
+    krpc_SpaceCenter_Resources_Max(conn, &max_ox, resources, "Oxidizer");
+    if (int(max_ox) > 0) {
+      has_ox = true;
+    } else {
+      has_ox = false;
+      sendToDisplay1(String("tox.txt=\"0/0\""));
+      sendToDisplay1(String("jox.val=100"));
+    }
+
+    krpc_SpaceCenter_Resources_Max(conn, &max_sf, resources, "SolidFuel");
+    if (int(max_sf) > 0) {
+      has_sf = true;
+    } else {
+      has_sf = false;
+      sendToDisplay1(String("tsf.txt=\"0/0\""));
+      sendToDisplay1(String("jsf.val=100"));
+    }
+
+    krpc_SpaceCenter_Resources_Max(conn, &max_mp, resources, "MonoPropellant");
+    if (int(max_mp) > 0) {
+      has_mp = true;
+    } else {
+      has_mp = false;
+      sendToDisplay1(String("tmp.txt=\"0/0\""));
+      sendToDisplay1(String("jmp.val=100"));
+    }
+
+    krpc_SpaceCenter_Resources_Max(conn, &max_xe, resources, "XenonGas");
+    if (int(max_xe) > 0) {
+      has_xe = true;
+    } else {
+      has_xe = false;
+      sendToDisplay1(String("txe.txt=\"0/0\""));
+      sendToDisplay1(String("jxe.val=100"));
+    }
+
+    krpc_SpaceCenter_Resources_Max(conn, &max_el, resources, "ElectricCharge");
+    if (int(max_el) > 0) {
+      has_el = true;
+    } else {
+      has_el = false;
+      sendToDisplay1(String("tel.txt=\"0/0\""));
+      sendToDisplay1(String("jel.val=100"));
+    }
+
+    krpc_SpaceCenter_Resources_Max(conn, &max_air, resources, "IntakeAir");
+    if (int(max_air) > 0) {
+      has_air = true;
+    } else {
+      has_air = false;
+      sendToDisplay1(String("tair.txt=\"0/0\""));
+      sendToDisplay1(String("jair.val=100"));
+    }
+
+    runOnce = false;
+  }
 
   if (has_lf){
-    error = krpc_SpaceCenter_Resources_Amount(conn, &amt_lf, resources, lf);
-    if (error != KRPC_OK) {hasError = true;}
-    error = krpc_SpaceCenter_Resources_Max(conn, &max_lf, resources, lf);
-    if (error != KRPC_OK) {hasError = true;}
+    krpc_SpaceCenter_Resources_Amount(conn, &amt_lf, resources, "LiquidFuel");
     sendToDisplay1(String("tlf.txt=\"") + String(int(amt_lf)) + String("/") + String(int(max_lf)) + String("\""));
     sendToDisplay1(String("jlf.val=") + String(100-int(amt_lf/max_lf*100)));
   }
 
   if (has_ox){
-    error = krpc_SpaceCenter_Resources_Amount(conn, &amt_ox, resources, ox);
-    if (error != KRPC_OK) {hasError = true;}
-    error = krpc_SpaceCenter_Resources_Max(conn, &max_ox, resources, ox);
-    if (error != KRPC_OK) {hasError = true;}
+    krpc_SpaceCenter_Resources_Amount(conn, &amt_ox, resources, "Oxidizer");
     sendToDisplay1(String("tox.txt=\"") + String(int(amt_ox)) + String("/") + String(int(max_ox)) + String("\""));
     sendToDisplay1(String("jox.val=") + String(100-int(amt_ox/max_ox*100)));
   }
 
+
   if (has_sf){
-    error = krpc_SpaceCenter_Resources_Amount(conn, &amt_sf, resources, sf);
-    if (error != KRPC_OK) {hasError = true;}
-    error = krpc_SpaceCenter_Resources_Max(conn, &max_sf, resources, sf);
-    if (error != KRPC_OK) {hasError = true;}
-    sendToDisplay1(String("tsf.txt=\"") + String(int(amt_sf)) + String("/") + String(int(max_sf)) + String("\""));
-    sendToDisplay1(String("jsf.val=") + String(100-int(amt_sf/max_sf*100)));
+      krpc_SpaceCenter_Resources_Amount(conn, &amt_sf, resources, "SolidFuel");
+      sendToDisplay1(String("tsf.txt=\"") + String(int(amt_sf)) + String("/") + String(int(max_sf)) + String("\""));
+      sendToDisplay1(String("jsf.val=") + String(100-int(amt_sf/max_sf*100)));
   }
 
+
   if (has_mp){
-    error = krpc_SpaceCenter_Resources_Amount(conn, &amt_mp, resources, mp);
-    if (error != KRPC_OK) {hasError = true;}
-    error = krpc_SpaceCenter_Resources_Max(conn, &max_mp, resources, mp);
-    if (error != KRPC_OK) {hasError = true;}
-    sendToDisplay1(String("tmp.txt=\"") + String(int(amt_mp)) + String("/") + String(int(max_mp)) + String("\""));
-    sendToDisplay1(String("jmp.val=") + String(100-int(amt_mp/max_mp*100)));
+      krpc_SpaceCenter_Resources_Amount(conn, &amt_mp, resources, "MonoPropellant");
+      sendToDisplay1(String("tmp.txt=\"") + String(int(amt_mp)) + String("/") + String(int(max_mp)) + String("\""));
+      sendToDisplay1(String("jmp.val=") + String(100-int(amt_mp/max_mp*100)));
   }
 
   if (has_xe){
-    error = krpc_SpaceCenter_Resources_Amount(conn, &amt_xe, resources, xe);
-    if (error != KRPC_OK) {hasError = true;}
-    error = krpc_SpaceCenter_Resources_Max(conn, &max_xe, resources, xe);
-    if (error != KRPC_OK) {hasError = true;}
-    sendToDisplay1(String("txe.txt=\"") + String(int(amt_xe)) + String("/") + String(int(max_xe)) + String("\""));
-    sendToDisplay1(String("jxe.val=") + String(100-int(amt_xe/max_xe*100)));
+      krpc_SpaceCenter_Resources_Amount(conn, &amt_xe, resources, "XenonGas");
+      sendToDisplay1(String("txe.txt=\"") + String(int(amt_xe)) + String("/") + String(int(max_xe)) + String("\""));
+      sendToDisplay1(String("jxe.val=") + String(100-int(amt_xe/max_xe*100)));
   }
   
   if (has_el){
-    error = krpc_SpaceCenter_Resources_Amount(conn, &amt_el, resources, el);
-    if (error != KRPC_OK) {hasError = true;}
-    error = krpc_SpaceCenter_Resources_Max(conn, &max_el, resources, el);
-    if (error != KRPC_OK) {hasError = true;}
+    krpc_SpaceCenter_Resources_Amount(conn, &amt_el, resources, "ElectricCharge");
     sendToDisplay1(String("tel.txt=\"") + String(int(amt_el)) + String("/") + String(int(max_el)) + String("\""));
     sendToDisplay1(String("jel.val=") + String(100-int(amt_el/max_el*100)));
   }
 
   if (has_air){
-    error = krpc_SpaceCenter_Resources_Amount(conn, &amt_air, resources, air);
-    if (error != KRPC_OK) {hasError = true;}
-    error = krpc_SpaceCenter_Resources_Max(conn, &max_air, resources, air);
-    if (error != KRPC_OK) {hasError = true;}
+    krpc_SpaceCenter_Resources_Amount(conn, &amt_air, resources, "IntakeAir");
     sendToDisplay1(String("tair.txt=\"") + String(int(amt_air)) + String("/") + String(int(max_air)) + String("\""));
     sendToDisplay1(String("jair.val=") + String(100-int(amt_air/max_air*100)));
   }
-
-  if (hasError) { errorLoop(); }
 }
 
 void send_data(){
@@ -75,19 +129,16 @@ void send_data(){
   if (debouncePause.pressed()) {
       if (PAUSED) { PAUSED = false; }
       else { PAUSED  = true; }
-      error = krpc_KRPC_set_Paused(conn, PAUSED);
-      if (error != KRPC_OK) {hasError = true;}
+      krpc_KRPC_set_Paused(conn, PAUSED);
   }
 
 //****************************************************************************************************
 // STAGE BUTTON
   if (debounceStage.pressed()) {
     if (digitalRead(pARM)){
-      error = krpc_UI_Message(conn, "Not Armed", 2.5, KRPC_UI_MESSAGEPOSITION_TOPCENTER, &red, 20);
-      if (error != KRPC_OK) {hasError = true;}
+      krpc_UI_Message(conn, "Not Armed", 2.5, KRPC_UI_MESSAGEPOSITION_TOPCENTER, &red, 20);
     } else {
-      error = krpc_SpaceCenter_Control_ActivateNextStage(conn, NULL, control);
-      if (error != KRPC_OK) {hasError = true;}
+      krpc_SpaceCenter_Control_ActivateNextStage(conn, NULL, control);
     }
   }
 
@@ -96,8 +147,7 @@ void send_data(){
   if (debounceBrakes.pressed()) {
       if (BRAKES) { BRAKES = false; }
       else { BRAKES = true; }
-      error = krpc_SpaceCenter_Control_set_Brakes(conn, control, BRAKES);
-      if (error != KRPC_OK) {hasError = true;}
+      krpc_SpaceCenter_Control_set_Brakes(conn, control, BRAKES);
 }
 
 //****************************************************************************************************
@@ -105,8 +155,7 @@ void send_data(){
   if (debounceGear.pressed()) {
       if (GEAR) { GEAR = false; }
       else { GEAR = true; }
-      error = krpc_SpaceCenter_Control_set_Gear(conn, control, GEAR);
-      if (error != KRPC_OK) {hasError = true;}
+      krpc_SpaceCenter_Control_set_Gear(conn, control, GEAR);
   }
 
 //****************************************************************************************************
@@ -114,8 +163,7 @@ void send_data(){
   if (debounceChutes.pressed()) {
       if (CHUTES) { CHUTES = false; }
       else { CHUTES = true; }
-      error = krpc_SpaceCenter_Control_set_Parachutes(conn, control, CHUTES);
-      if (error != KRPC_OK) {hasError = true;}
+      krpc_SpaceCenter_Control_set_Parachutes(conn, control, CHUTES);
   }
 
 //****************************************************************************************************
@@ -123,8 +171,7 @@ void send_data(){
   if (debounceSolar.pressed()) {
       if (SOLAR) { SOLAR = false; }
       else { SOLAR = true; }
-      error = krpc_SpaceCenter_Control_set_SolarPanels(conn, control, SOLAR);
-      if (error != KRPC_OK) {hasError = true;}
+      krpc_SpaceCenter_Control_set_SolarPanels(conn, control, SOLAR);
   }
 
 //****************************************************************************************************
@@ -132,8 +179,7 @@ void send_data(){
   if (debounceLights.pressed()) {
       if (LIGHTS) { LIGHTS = false; }
       else { LIGHTS = true; }
-      error = krpc_SpaceCenter_Control_set_Lights(conn, control, LIGHTS);
-      if (error != KRPC_OK) {hasError = true;}
+      krpc_SpaceCenter_Control_set_Lights(conn, control, LIGHTS);
   }
 
 //****************************************************************************************************
@@ -141,22 +187,18 @@ void send_data(){
   if (debounceMap.pressed()) {
       if (MAP) {
         MAP = false;
-        error = krpc_SpaceCenter_Camera_set_Mode(conn, camera, KRPC_SPACECENTER_CAMERAMODE_AUTOMATIC);
-        if (error != KRPC_OK) {hasError = true;}
+        krpc_SpaceCenter_Camera_set_Mode(conn, camera, KRPC_SPACECENTER_CAMERAMODE_AUTOMATIC);
       } else { 
         MAP = true; 
-        error = krpc_SpaceCenter_Camera_set_Mode(conn, camera, KRPC_SPACECENTER_CAMERAMODE_MAP);
-        if (error != KRPC_OK) {hasError = true;}
+        krpc_SpaceCenter_Camera_set_Mode(conn, camera, KRPC_SPACECENTER_CAMERAMODE_MAP);
     }
   }
 
 //****************************************************************************************************
 // QUICKSAVE BUTTON
   if (debounceSave.pressed()) {
-    error = krpc_SpaceCenter_Quicksave(conn);
-    if (error != KRPC_OK) {hasError = true;}
-    error = krpc_UI_Message(conn, "Quicksaving...", 2.5, KRPC_UI_MESSAGEPOSITION_TOPCENTER, &yellow, 20);
-    if (error != KRPC_OK) {hasError = true;}
+    krpc_SpaceCenter_Quicksave(conn);
+    krpc_UI_Message(conn, "Quicksaving...", 2.5, KRPC_UI_MESSAGEPOSITION_TOPCENTER, &yellow, 20);
   }
 
 //****************************************************************************************************
@@ -168,22 +210,19 @@ void send_data(){
 //****************************************************************************************************
 // SAS TOGGLE
   bool TEMP = digitalRead(pSAS) == LOW;
-  error = krpc_SpaceCenter_Control_set_SAS(conn, control, TEMP);
-  if (error != KRPC_OK) {hasError = true;}
+  krpc_SpaceCenter_Control_set_SAS(conn, control, TEMP);
 
 //****************************************************************************************************
 // RCS TOGGLE
   TEMP = digitalRead(pRCS) == LOW;
-  error = krpc_SpaceCenter_Control_set_RCS(conn, control, TEMP);
-  if (error != KRPC_OK) {hasError = true;}
+  krpc_SpaceCenter_Control_set_RCS(conn, control, TEMP);
 
 //****************************************************************************************************
 // ABORT TOGGLE
   if (debounceAbort.pressed()){
-    error = krpc_SpaceCenter_Control_set_Abort(conn, control, true);
-    if (error != KRPC_OK) {hasError = true;}
+    krpc_SpaceCenter_Control_set_Abort(conn, control, true);
   } else {
-    error = krpc_SpaceCenter_Control_set_Abort(conn, control, false);
+    krpc_SpaceCenter_Control_set_Abort(conn, control, false);
   }
   
 
@@ -200,19 +239,14 @@ void send_data(){
     d_th = 980*5;
     d_stix = 512*5;
   }
-  error = krpc_SpaceCenter_Control_set_Throttle(conn, control, throttle_value/d_th);
-  if (error != KRPC_OK) {hasError = true;}
+  krpc_SpaceCenter_Control_set_Throttle(conn, control, throttle_value/d_th);
   //Right X
-  error = krpc_SpaceCenter_Control_set_Yaw(conn, control, rx_value/d_stix);
-  if (error != KRPC_OK) {hasError = true;}
+  krpc_SpaceCenter_Control_set_Yaw(conn, control, rx_value/d_stix);
   //Right Y
-  error = krpc_SpaceCenter_Control_set_Pitch(conn, control, ry_value/d_stix);
-  if (error != KRPC_OK) {hasError = true;}
+  krpc_SpaceCenter_Control_set_Pitch(conn, control, ry_value/d_stix);
   //Right Z
-  error = krpc_SpaceCenter_Control_set_Roll(conn, control, rz_value/d_stix);
-  if (error != KRPC_OK) {hasError = true;}
+  krpc_SpaceCenter_Control_set_Roll(conn, control, rz_value/d_stix);
 
-  if (hasError) { errorLoop(); }
 }
 
 void readValues(){

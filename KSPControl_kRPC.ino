@@ -7,7 +7,7 @@
 
 
 //****************************************************************************************************
-//                                    VARIABLE DECLARATIONS
+//VARIABLE DECLARATIONS
 //****************************************************************************************************
 
 // ####### CONSTANTS #######
@@ -15,13 +15,13 @@
 // Throttle
 const byte pTHROTTLE = A3;
 // Left Stick
-const byte pTX = A5;       //translation x-axis
-const byte pTY = A4;       //translation y-axis
-const byte pTZ = A14;       //translation z-axis
+const byte pTX = A5;   //translation x-axis
+const byte pTY = A4;   //translation y-axis
+const byte pTZ = A14;   //translation z-axis
 // Right Stick
-const byte pRX = A7;       //rotation x-axis
-const byte pRY = A6;       //rotation y-axis
-const byte pRZ = A15;       //rotation z-axis
+const byte pRX = A7;   //rotation x-axis
+const byte pRY = A6;   //rotation y-axis
+const byte pRZ = A15;   //rotation z-axis
 // Buttons
 const byte pA1 = 24;
 const byte pA2 = 43;
@@ -126,20 +126,21 @@ float amt_air;
 float max_air;
 bool has_air;
 
-const char lf = "LiquidFuel";
-const char ox = "Oxidizer";
-const char sf = "SolidFuel";
-const char mp = "MonoPropellant";
-const char xe = "XenonGas";
-const char el = "ElectricCharge";
-const char air = "IntakeAir";
-
+/*
+LF "LiquidFuel"
+OX "Oxidizer"
+SF "SolidFuel"
+MP "MonoPropellant"
+XE "XenonGas"
+EL "ElectricCharge"
+AIR "IntakeAir"
+*/
 
 // ####### OTHER #######
 int val;
 bool debug;
 bool debugDisp;
-bool hasError;
+bool runOnce = true;
 bool PAUSED = false;
 bool MAP = false;
 int rightScreen;
@@ -156,7 +157,7 @@ int rz_value;
 void(* softReboot) (void) = 0;
 
 //****************************************************************************************************
-//                                  kRPC VARIABLES
+//  kRPC VARIABLES
 //****************************************************************************************************
 HardwareSerial *conn;
 krpc_SpaceCenter_Control_t instance;
@@ -180,26 +181,26 @@ void setup() {
 
 // ############### PIN SETUP ###############
 
-    pinMode(pMOTORON, OUTPUT);
-    digitalWrite(pMOTORON, LOW);
-    pinMode(pMOTORUP, OUTPUT);
-    analogWrite(pMOTORUP, 0);
-    pinMode(pMOTORDOWN, OUTPUT);
-    analogWrite(pMOTORDOWN, 0);
+pinMode(pMOTORON, OUTPUT);
+digitalWrite(pMOTORON, LOW);
+pinMode(pMOTORUP, OUTPUT);
+analogWrite(pMOTORUP, 0);
+pinMode(pMOTORDOWN, OUTPUT);
+analogWrite(pMOTORDOWN, 0);
 
-    pinMode(4, OUTPUT);
-    pinMode(5, OUTPUT);
-    pinMode(6, OUTPUT);
-    pinMode(7, OUTPUT);
-    pinMode(8, OUTPUT);
-    pinMode(9, OUTPUT);
+pinMode(4, OUTPUT);
+pinMode(5, OUTPUT);
+pinMode(6, OUTPUT);
+pinMode(7, OUTPUT);
+pinMode(8, OUTPUT);
+pinMode(9, OUTPUT);
 
-    pinMode(2, INPUT);
-    pinMode(3, INPUT);
-    
-    for (int i = 22; i <= 53; i++) {
-      pinMode(i, INPUT);
-    }
+pinMode(2, INPUT);
+pinMode(3, INPUT);
+
+for (int i = 22; i <= 53; i++) {
+  pinMode(i, INPUT);
+}
 
 
 // ############### kRPC Variable Setup ###############
@@ -207,9 +208,9 @@ conn = &Serial;
 delay(1000);
 
 if (!digitalRead(pDEBUG)){
-    
+
   } else {
-    runToConnect();
+runToConnect();
   }
 }
 
@@ -235,8 +236,11 @@ void loop() {
 }
 
 void runToConnect(){
-  sendToDisplay1(String("page 1"));
-  sendToDisplay2(String("page 1"));
+  runOnce = true;
+  sendToDisplay1(String("page 0"));
+  sendToDisplay2(String("page 0"));
+  sendToDisplay1(String("boot.txt=\"") + String("connecting")+String("\""));
+  sendToDisplay2(String("boot.txt=\"") + String("connecting")+String("\""));
 
   // Connect to kRPC on PC
   do {
@@ -254,6 +258,8 @@ void runToConnect(){
     }
   } while (error != KRPC_OK && digitalRead(pDEBUG));
 
+  //sendToDisplay1(String("page 1"));
+  //sendToDisplay2(String("page 1"));
   // Get the active vessel on the screen (only when in flight mode)
   do {
     error = krpc_SpaceCenter_ActiveVessel(conn, &vessel);
@@ -302,60 +308,19 @@ void runToConnect(){
     }
   } while (error != KRPC_OK && digitalRead(pDEBUG));
 
-  do {
-    hasError = false;
-    error = krpc_SpaceCenter_Resources_HasResource(conn, resources, &has_lf, lf);
-    if (error != KRPC_OK) {hasError = true;}
-    if (!has_lf){
-      sendToDisplay1(String("tlf.txt=\"0/0\""));
-      sendToDisplay1(String("jlf.val=100"));
-    }
-    error = krpc_SpaceCenter_Resources_HasResource(conn, resources, &has_ox, ox);
-    if (error != KRPC_OK) {hasError = true;}
-    if (!has_ox){
-      sendToDisplay1(String("tox.txt=\"0/0\""));
-      sendToDisplay1(String("jox.val=100"));
-    }
-    error = krpc_SpaceCenter_Resources_HasResource(conn, resources, &has_sf, sf);
-    if (error != KRPC_OK) {hasError = true;}
-    if (!has_sf){
-      sendToDisplay1(String("tsf.txt=\"0/0\""));
-      sendToDisplay1(String("jsf.val=100"));
-    }
-    error = krpc_SpaceCenter_Resources_HasResource(conn, resources, &has_mp, mp);
-    if (error != KRPC_OK) {hasError = true;}
-    if (!has_mp){
-      sendToDisplay1(String("tmp.txt=\"0/0\""));
-      sendToDisplay1(String("jmp.val=100"));
-    }
-    error = krpc_SpaceCenter_Resources_HasResource(conn, resources, &has_xe, xe);
-    if (error != KRPC_OK) {hasError = true;}
-    if (!has_xe){
-      sendToDisplay1(String("txe.txt=\"0/0\""));
-      sendToDisplay1(String("jxe.val=100"));
-    }
-    error = krpc_SpaceCenter_Resources_HasResource(conn, resources, &has_el, el);
-    if (error != KRPC_OK) {hasError = true;}
-    if (!has_el){
-      sendToDisplay1(String("tel.txt=\"0/0\""));
-      sendToDisplay1(String("jel.val=100"));
-    }
-    error = krpc_SpaceCenter_Resources_HasResource(conn, resources, &has_air, air);
-    if (error != KRPC_OK) {hasError = true;}
-    if (!has_air){
-      sendToDisplay1(String("tair.txt=\"0/0\""));
-      sendToDisplay1(String("jair.val=100"));
-    }
-  } while (hasError);
-
-
   sendToDisplay1(String("page 2"));
   sendToDisplay2(String("page 2"));
+  has_lf = NULL;
+  has_ox = NULL;
+  has_sf = NULL;
+  has_mp = NULL;
+  has_xe = NULL;
+  has_el = NULL;
+  has_air = NULL;
+
 }
 
 
 void errorLoop(){
-  hasError = false;
   runToConnect();
 }
-
